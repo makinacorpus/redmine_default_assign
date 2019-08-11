@@ -8,7 +8,14 @@ require 'default_assign_project_patch'
 require 'default_assign/hooks/default_assign_projects_hooks'
 require 'default_assign/hooks/default_assign_issues_hooks.rb'
 
-if Rails::VERSION::MAJOR >= 3
+if Rails::VERSION::MAJOR >= 5
+  ActiveSupport::Reloader.to_prepare do
+    require_dependency 'project'
+    require_dependency 'issue'
+    Project.send(:include, DefaultAssignProjectPatch)
+    Issue.send(:include, DefaultAssignIssuePatch)
+  end
+elsif Rails::VERSION::MAJOR >= 3
   ActionDispatch::Callbacks.to_prepare do
     require_dependency 'project'
     require_dependency 'issue'
